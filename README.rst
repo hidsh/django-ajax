@@ -56,7 +56,7 @@ Through Github:
 
 .. code:: sh
 
-    pip install -e "git+https://github.com/hidsh/django-ajax.git#egg=djangoajax"
+    pip install git+https://github.com/hidsh/django-ajax.git
 
 2- Add ``'django_ajax'`` into the ``INSTALLED_APPS`` list.
 
