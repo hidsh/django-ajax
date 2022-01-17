@@ -32,8 +32,7 @@ Fast and easy AJAX libraries for django projects.
 ------------
 This README and js files were excavated from v2.3.7.
 
-`issue #42 <https://github.com/yceruto/django-ajax/issues/42>`
-`old document <http://yceruto.github.io/django-ajax/>`
+issue #42 https://github.com/yceruto/django-ajax/issues/42 
 
 Requirements
 ------------
@@ -53,21 +52,11 @@ Install django-ajax in your python environment
 
 1- Download and install package:
 
-.. code:: sh
-
-    $ pip install djangoajax
-
 Through Github:
 
 .. code:: sh
 
-    pip install -e git://github.com/yceruto/django-ajax#egg=djangoajax
-
-or simply with:
-
-.. code:: sh
-
-    $ python setup.py install
+    pip install -e git://github.com/hidsh/django-ajax#egg=djangoajax
 
 2- Add ``'django_ajax'`` into the ``INSTALLED_APPS`` list.
 
