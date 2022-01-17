@@ -2,14 +2,22 @@
 django-ajax
 ===========
 
-Fast and easy AJAX libraries for django applications.
+Fast and easy AJAX libraries for django projects.
 
-.. image:: https://api.travis-ci.com/yceruto/django-ajax.svg?branch=master
-    :alt: Master Build Status
-    :target: https://travis-ci.com/github/yceruto/django-ajax
+.. image:: https://travis-ci.org/yceruto/django-ajax.png?branch=master
+    :alt: Build Status
+    :target: https://travis-ci.org/yceruto/django-ajax
     
 .. image:: https://img.shields.io/pypi/v/djangoajax.svg
     :alt: PYPI Package
+    :target: https://pypi.python.org/pypi/djangoajax
+    
+.. image:: https://img.shields.io/pypi/dm/django-ajax.svg
+    :alt: PYPI Download
+    :target: https://pypi.python.org/pypi/djangoajax
+    
+.. image:: https://img.shields.io/pypi/pyversions/djangoajax.svg
+    :alt: PYPI Versions
     :target: https://pypi.python.org/pypi/djangoajax
     
 .. image:: https://img.shields.io/pypi/status/django-ajax.svg
@@ -20,18 +28,19 @@ Fast and easy AJAX libraries for django applications.
     :alt: PYPI License
     :target: https://pypi.python.org/pypi/djangoajax
 
+(fork)
+------------
+This README and js files were excavated from v2.3.7.
+
+`issue #42 <https://github.com/yceruto/django-ajax/issues/42>`
+`old document <http://yceruto.github.io/django-ajax/>`
+
 Requirements
 ------------
 
-``3.x``
-
-* `python`_ >=3.5
-* `django`_ >=2.0
-
-``2.x``
-
-* `python`_ >=2.7
-* `django`_ >=1.7,<2.0
+* `python`_ >= 2.6
+* `django`_ >= 1.5
+* `jQuery`_ >= 1.5
 
 .. _`python`: http://www.python.org/
 .. _`django`: https://djangoproject.com
@@ -62,7 +71,7 @@ or simply with:
 
 2- Add ``'django_ajax'`` into the ``INSTALLED_APPS`` list.
 
-3- Read usage section and enjoy this feature!
+3- Read usage section and enjoy its advantages!
 
 
 Usage
@@ -76,17 +85,17 @@ Usage
     from django_ajax.decorators import ajax
 
     @ajax
-    def my_view(request):
+    def my_view(request)
         do_something()
         
-When the view does not return anything, you will receive this response (JSON format):
+When nothing is returned as result of view then returns (JSON format):
 
 .. code:: javascript
 
     {"status": 200, "statusText": "OK", "content ": null}
 
 
-**Sending content**
+**Sending custom data in the response**
 
 .. code:: python
 
@@ -95,7 +104,7 @@ When the view does not return anything, you will receive this response (JSON for
         c = 2 + 3
         return {'result': c}
         
-The whole result is converted into a JSON format as part of the `content` element:
+The result is send to the browser in the following way (JSON format)
 
 .. code:: javascript
 
@@ -115,8 +124,7 @@ The whole result is converted into a JSON format as part of the `content` elemen
         # if the request.user is anonymous then this view not proceed 
         return {'user_id': request.user.id}
         
-The location or path of the redirection response will be given in the `content` item, 
-also the `status` and `statusText` will reflect what is going on:
+The JSON response:
 
 .. code:: javascript
 
@@ -160,17 +168,19 @@ The JSON response:
 AJAXMiddleware
 ~~~~~~~~~~~~~~
 
-If you are using AJAX at all times in your project, we suggest you activate the AJAXMiddleware described below.
+If you use AJAX quite frequently in your project, we suggest using the AJAXMiddleware described below.
 
-Add ``django_ajax.middleware.AJAXMiddleware`` to the ``MIDDLEWARE_CLASSES`` list in ``settings.py`` and all your responses will be converted to JSON whereas the request was made via AJAX, otherwise it will return a normal HttpResponse.
+Add ``django_ajax.middleware.AJAXMiddleware`` into the ``MIDDLEWARE_CLASSES`` list in ``settings.py``.
 
-.. caution:: If this middleware is activated you cannot use the ``@ajax`` decorator. That will cause double JSON conversion.
+All your responses will be converted to JSON if the request was made by AJAX, otherwise is return a HttpResponse.
+
+.. caution:: If you use this middleware cannot use ``@ajax`` decorator.
 
 
 AJAXMixin for class-based views
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-``AJAXMixin`` is an object that call to AJAX decorator.
+``AJAXMixin`` is an object that calls the AJAX decorator.
 
 .. code:: python
 
@@ -186,4 +196,135 @@ The JSON response:
 
     {"status": 200, "statusText": "OK", "content": "<html>...</html>"}
 
-Enjoy And Share!
+
+AJAX on client side
+~~~~~~~~~~~~~~~~~~~
+
+Include ``jquery.ajax.min.js`` into ``base.html`` template:
+
+.. code:: html
+
+    <script type="text/javascript" src="{% static 'django_ajax/js/jquery.ajax.min.js' %}"></script>
+
+Call to AJAX request using the ``ajaxPost`` or ``ajaxGet`` functions:
+
+.. code:: html
+
+    <script type="text/javascript">
+        ajaxPost('/save', {'foo': 'bar'}, function(content){
+            //onSuccess
+            alert(content);
+        })
+    </script>
+
+or
+
+.. code:: html
+
+    <script type="text/javascript">
+        ajaxGet('/', function(content){
+            //onSuccess
+            alert(content);
+        })
+    </script>
+
+If the response is not successful, it's shown an alert with the message appropriated.
+
+**AJAX plugin** (Based on `eldarion-ajax <https://github.com/eldarion/eldarion-ajax>`_)
+
+Include ``jquery.ajax-plugin.min.js`` into ``base.html`` template:
+
+.. code:: html
+
+    <script type="text/javascript" src="{% static 'django_ajax/js/jquery.ajax-plugin.min.js' %}"></script>
+
+In this moment any tag with the attribute ``data-ajax`` will be controlled by ajax plugin. Each request is sent using AJAX and the response will be handle on JSON format.
+
+The value of the attribute ``data-success`` will be used as callback function if the request is successful. This function is called with an argument that represent the content response:
+
+.. code:: html
+
+    <a href="/hello-world/" class="btn btn-primary" data-ajax="true" data-success="processResponse">Show Alert</a>
+
+Where "processResponse" in this case is a callback function:
+
+.. code:: html
+
+   <script type="text/javascript">
+        function processResponse(content) {
+            do_something(content);
+        }
+    </script>
+
+**Process fragments**
+
+Inspired on `eldarion-ajax <https://github.com/eldarion/eldarion-ajax>`_ the data
+received by the names ``'fragments'``, ``'inner-fragments'``, ``'append-fragments'``
+or ``'prepend-fragments'`` will be processed by default, unless you pass in the
+request the option "process-fragments" equal false. Here's an example:
+
+.. code:: python
+
+    @ajax
+    def fragments_view(request):
+        data = {
+            'fragments': {
+                '#id1': 'replace element with this content1'
+            },
+            'inner-fragments': {
+                '#id2': 'replace inner content'
+            },
+            'append-fragments': {
+                '.class1': 'append this content'
+            },
+            'prepend-fragments': {
+                '.class2': 'prepend this content'
+            }
+        }
+        return data
+
+These data are sent in response:
+
+.. code:: javascript
+
+    {"status": 200, "statusText": "OK", "content": {
+            "fragments": {"#id1": "replace element with this content1"},
+            "inner-fragments": {"#id2": "replace inner content"},
+            "append-fragments": {".class1": "append this content"},
+            "prepend-fragments": {".class2": "prepend this content"}
+        }}
+
+Then, using AJAX (``ajax``, ``ajaxPost`` or ``ajaxGet``) functions these fragments to be processed automatically before calling to success function.
+
+.. code:: html
+
+   <script type="text/javascript">
+        function fragments() {
+            ajaxGet('/fragments-view-url', function(content){
+                alert('The fragments was processed successfully!');
+            });
+        }
+    </script>
+
+If you do not want to process the fragments never, modify the AJAX configuration
+that comes by default:
+
+.. code:: html
+
+    <script type="text/javascript">
+        ajax.DEFAULTS["process-fragments"] = false; //true by default
+    </script>
+
+or as option on the request:
+
+.. code:: html
+
+    <script type="text/javascript">
+        function fragments() {
+            ajaxGet('/fragments-view-url', function(content){
+                do_something_with(content.fragments);
+            }, {"process-fragments": false});
+        }
+    </script>
+
+Enjoy!
